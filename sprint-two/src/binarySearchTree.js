@@ -7,8 +7,8 @@ var BinarySearchTree = function(value) {
   bst.value = value;
   bst.left = null;
   bst.right = null;
-  // bst.minDepth = 0;
-  // bst.maxDepth = 0;
+  bst.minDepth = 0;
+  bst.maxDepth = 0;
   bst.depthArray = [];
   bst.depthTracker = 0;
   
@@ -70,10 +70,10 @@ BinarySearchTree.prototype.depthFirstLog = function (callback, current) {
 BinarySearchTree.prototype.breadthFirstLog = function (callback, current) {
   // make a queue array with the root node as it's only value
   // while the queue isn't empty
-    // set store var to unshift of queue (index 0)
-    // callback on the store var
-    // if store var has a left, push to queue
-    // if store var has a right, push to queue
+  // set store var to unshift of queue (index 0)
+  // callback on the store var
+  // if store var has a left, push to queue
+  // if store var has a right, push to queue
 
   var queue = [this];
   
@@ -126,16 +126,41 @@ BinarySearchTree.prototype.isResizeNeeded = function() {
       break;
     }
   }
-  console.log('depthArray.length: ', depthArray.length);
-  console.log('minDepth: ', minDepth);
+  // console.log('depthArray.length: ', depthArray.length);
+  // console.log('minDepth: ', minDepth);
   // console.log('math min: ', Math.floor(minDepth) * 2);
   // console.log('math max: ', Math.floor(minDepth) * 2);
   if (Math.floor(depthArray.length) > Math.floor(minDepth) * 2) {
-    console.log('Resize is needed');
+    // console.log('Resize is needed');
     return true;
   }
-  console.log('Resize is NOT needed');
+  // console.log('Resize is NOT needed');
   return false;
+};
+
+BinarySearchTree.prototype.traverseCallback = function (value, callback, current, depth = 1) {
+  //// a refactored version of traverse that wil be utalizing a callback function
+  
+  //sets current as a passed in value or this
+  current = current || this;
+  // console.log (`${current.value} & ${depth}`);
+  
+  //if the value is less than node and left isn't empty
+  if (value < current.value && current.left !== null) {
+    // recoursive into the left node
+    this.traverseCallback(value, callback. current.left, depth + 1);
+  // if the value is greater than ndoe and right isn't empty
+  } else if (value > current.value && current.right !== null) {
+    //recousive into the right now
+    this.traverseCallback(value, callback, current.right, depth + 1);
+  //if is correct node
+  } else if (value === current.value) {
+    // calls callback
+    callback(current.value, depth);
+  }
+  
+  //invokes the callback, to allow the information to go backup the recoursive
+  // return foundNode;
 };
 
 

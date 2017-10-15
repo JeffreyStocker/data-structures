@@ -86,5 +86,34 @@ describe('binarySearchTree', function() {
     // var test = binarySearchTree.isResizeNeeded();
     // expect(test).to.equal(true);
   });
+
+  it ('should return the correct node when tranversing with callback and invoking a callback ', function () {
+    var array = [];
+    var expectdArray = [7];
+    var func = function(value) { array.push(value); };
+    binarySearchTree.insert(2);
+    binarySearchTree.insert(3);
+    binarySearchTree.insert(7);
+    binarySearchTree.traverseCallback(7, func);
+    expect (array).to.eql(expectdArray);
+  });
+
+  it ('should return the correct depth when tranversing with callback and invoking a callback ', function () {
+    var array = [];
+    var expectdArray = [2,3,4,1];
+    var func = function(value, depth) { array.push(depth); };
+    //1st node = 5
+    binarySearchTree.insert(2);
+    binarySearchTree.insert(3);
+    binarySearchTree.insert(7);
+    binarySearchTree.insert(9);
+    binarySearchTree.insert(10);
+    binarySearchTree.traverseCallback(7, func);
+    
+    binarySearchTree.traverseCallback(9, func);
+    binarySearchTree.traverseCallback(10, func);
+    binarySearchTree.traverseCallback(5, func);
+    expect (array).to.eql(expectdArray);
+  });
   
 });
