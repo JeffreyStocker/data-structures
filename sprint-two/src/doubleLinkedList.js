@@ -2,6 +2,31 @@ var DoubleLinkedList = function() {
   var dList = {}; //{value: "somevalue", pointer: {next object} } 
   dList.head = null;
   dList.tail = null;
+
+  dlist.remove = function (value) {
+
+    
+  };
+
+  dlist.find = function (value, callback) {
+    var node = this;
+    if (!dlist.head) {
+      return undefined;
+    }
+
+    while (value !== node.value) {
+      if (value === node.value) {
+        callback (nove.value, node);
+        return node;
+      }
+      if (node === dList.tail) {
+        return undefined;
+      } else {
+        node = node.next;
+      }
+    }
+    
+  };
   
   dList.addToHead = function(value) {
     // set this new value as a linked list node

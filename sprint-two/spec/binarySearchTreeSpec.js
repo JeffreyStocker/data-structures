@@ -11,7 +11,8 @@ describe('binarySearchTree', function() {
     expect(binarySearchTree.depthFirstLog).to.be.a('function');
   });
 
-  it('should insert values at the correct location in the tree', function() {
+  it.only('should insert values at the correct location in the tree', function() {
+
     binarySearchTree.insert(2);
     binarySearchTree.insert(3);
     binarySearchTree.insert(7);
@@ -72,19 +73,24 @@ describe('binarySearchTree', function() {
     binarySearchTree.insert(7);
     binarySearchTree.insert(10);
     binarySearchTree.insert(11);
+    // var BSTResizeNeededFalse = JSON.parse('{"value":5,"left":{"value":3,"left":{"value":2,"left":null,"right":null},"right":{"value":4,"left":null,"right":null}},"right":{"value":8,"left":{"value":7,"left":null,"right":null},"right":{"value":10,"left":null,"right":{"value":11,"left":null,"right":null}}},"minDepth":0,"maxDepth":0,"depthArray":[],"depthTracker":0,"maxdepth":3}');
+    // console.log ('string :' + JSON.stringify(binarySearchTree));
 
 
-    var test = binarySearchTree.isResizeNeeded();
-    expect(test).to.equal(true);
+    var test = binarySearchTree.isResizeNeeded(false);
+    expect(test).to.equal(false);
     
     binarySearchTree.insert(12);
     binarySearchTree.insert(13);
     binarySearchTree.insert(14);
     binarySearchTree.insert(15);
     binarySearchTree.insert(16);
-    
-    // var test = binarySearchTree.isResizeNeeded();
-    // expect(test).to.equal(true);
+    binarySearchTree.insert(17);
+    binarySearchTree.insert(18);
+    // var BSTResizeNeededTrue = JSON.parse('{"value":5,"left":{"value":3,"left":{"value":2,"left":null,"right":null},"right":{"value":4,"left":null,"right":null}},"right":{"value":8,"left":{"value":7,"left":null,"right":null},"right":{"value":10,"left":null,"right":{"value":11,"left":null,"right":{"value":12,"left":null,"right":{"value":13,"left":null,"right":{"value":14,"left":null,"right":{"value":15,"left":null,"right":{"value":16,"left":null,"right":null}}}}}}}},"minDepth":0,"maxDepth":0,"depthArray":[],"depthTracker":0,"maxdepth":8}');
+
+    var test = binarySearchTree.isResizeNeeded(true);
+    expect(test).to.equal(true);
   });
 
   it ('should return the correct node when tranversing with callback and invoking a callback ', function () {
@@ -94,26 +100,42 @@ describe('binarySearchTree', function() {
     binarySearchTree.insert(2);
     binarySearchTree.insert(3);
     binarySearchTree.insert(7);
-    binarySearchTree.traverseCallback(7, func);
+    binarySearchTree.find(7, func);
     expect (array).to.eql(expectdArray);
   });
 
   it ('should return the correct depth when tranversing with callback and invoking a callback ', function () {
     var array = [];
-    var expectdArray = [2,3,4,1];
-    var func = function(value, depth) { array.push(depth); };
+    var expectdArray = [2, 3, 4, 1];
+    var func = function(value, notused, depth) { array.push(depth); };
     //1st node = 5
     binarySearchTree.insert(2);
     binarySearchTree.insert(3);
     binarySearchTree.insert(7);
     binarySearchTree.insert(9);
     binarySearchTree.insert(10);
-    binarySearchTree.traverseCallback(7, func);
+    binarySearchTree.find(7, func);
     
-    binarySearchTree.traverseCallback(9, func);
-    binarySearchTree.traverseCallback(10, func);
-    binarySearchTree.traverseCallback(5, func);
+    binarySearchTree.find(9, func);
+    binarySearchTree.find(10, func);
+    binarySearchTree.find(5, func);
     expect (array).to.eql(expectdArray);
+  });
+
+  it ('should return the value of each node that gets called with the function each', function () {
+    var array = [];
+    var expectdArray = [5, 2, 3, 7, 9, 10];
+    var func = function(value, notused, depth) { array.push(value); };
+    //1st node = 5
+    binarySearchTree.insert(2);
+    binarySearchTree.insert(3);
+    binarySearchTree.insert(7);
+    binarySearchTree.insert(9);
+    binarySearchTree.insert(10);
+    binarySearchTree.each(func);
+
+    expect (array).to.eql(expectdArray);
+
   });
   
 });

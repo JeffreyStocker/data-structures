@@ -9,13 +9,64 @@ var BinarySearchTree = function(value) {
   bst.right = null;
   bst.minDepth = 0;
   bst.maxDepth = 0;
-  bst.depthArray = [];
+  bst.depthArray = [1];
   bst.depthTracker = 0;
   
   return bst;
 };
 
 BinarySearchTree.prototype.insert = function (value) {
+  //refactoring to accrount for callback inside in the traversal function
+
+  // create newNode with value
+  var nodeToInsert = BSTnode(value);
+
+  this.find (value, function (foundvalue, node, depth) { //get node to work on from helper function
+    // console.log ('node to insert:', nodeToInsert);
+    // var node = this.traversal(value); // val === node.value 
+    if (nodeToInsert.value === node.value) { //node already exist!!
+      console.debug('This node already exists'); //if value < root node and previousNode.left is null
+    } else if (nodeToInsert.value < node.value) { // newNode is previousNode.left
+      node.left = nodeToInsert;  //else (if value > root node) and previousNode.right is null
+      this.adjustDepthArray(depth);
+    } else if (nodeToInsert.value > node.value) {     // newNode is previousNode.right
+      node.right = nodeToInsert;   // else can't find anything
+      this.adjustDepthArray(depth);
+    } else {    //console log error
+      console.error('Can\'t find the correct place to put the node');
+    }
+  }.bind(this));
+};
+
+BinarySearchTree.prototype.adjustDepthArray = function (depth) {
+  //adjusts the deptharray;
+  if (this.depthArray [depth + 1 ]) {
+    this.depthArray [depth + 1 ] += 1;
+  } else {
+    this.depthArray [depth + 1 ] = 1;
+  }
+
+  if (depth > this.maxDepth) {
+    this.maxDepth = depth;
+    this.isResizeNeeded() && this.rebalance(); //if true then rebalance the array
+  }
+};
+
+BinarySearchTree.prototype.rebalance = function () {
+
+  var oldBts = this.bts;
+  var storageOfEachItem = [];
+  // go through each item in the seach Node
+    //while doing this, remove the links left and right to the node
+  // 
+  var nodes = this.each(function (value, node, depth) {
+
+  });
+
+
+};
+
+BinarySearchTree.prototype.insertOldNoCallbackInvoked = function (value) {
    
   // create newNode with value
   var nodeToInsert = BSTnode(value);
@@ -89,6 +140,28 @@ BinarySearchTree.prototype.breadthFirstLog = function (callback, current) {
   }
 };
 
+BinarySearchTree.prototype.each = function (callback, current, depth) {
+
+
+
+  //sets current as a passed in value or this
+  current = current || this;
+
+  //callback on each node
+  callback(current.value, current, depth);
+  
+  //if the value is less than node and left isn't empty
+  if (current.left) {
+    // recoursive into the left nodeS
+    this.each(callback, current.left, depth + 1);
+  // if the value is greater than ndoe and right isn't empty
+  }
+  if (current.right) {
+    //recousive into the right now
+    this.each(callback, current.right, depth + 1);
+  }
+};
+
 BinarySearchTree.prototype.traversal = function (value, current, depth = 0) {
   //sets current as a passed in value or this
   current = current || this;
@@ -117,6 +190,7 @@ BinarySearchTree.prototype.traversal = function (value, current, depth = 0) {
 //// this is not done, it is a orphin function right now
 //// needs to be incorperated into resizing the binary tree
 BinarySearchTree.prototype.isResizeNeeded = function() {
+  // use detphArray to determine if resize needed
   var depthArray = this.depthArray;
   // depthArray = [1, 2, 4, 1, 1, 1, 1, 1];
   var minDepth = 0;
@@ -126,37 +200,34 @@ BinarySearchTree.prototype.isResizeNeeded = function() {
       break;
     }
   }
-  // console.log('depthArray.length: ', depthArray.length);
-  // console.log('minDepth: ', minDepth);
-  // console.log('math min: ', Math.floor(minDepth) * 2);
-  // console.log('math max: ', Math.floor(minDepth) * 2);
   if (Math.floor(depthArray.length) > Math.floor(minDepth) * 2) {
-    // console.log('Resize is needed');
     return true;
   }
-  // console.log('Resize is NOT needed');
   return false;
 };
 
-BinarySearchTree.prototype.traverseCallback = function (value, callback, current, depth = 1) {
+
+BinarySearchTree.prototype.find = function (value, callback, current, depth = 1) {
   //// a refactored version of traverse that wil be utalizing a callback function
   
   //sets current as a passed in value or this
+
   current = current || this;
   // console.log (`${current.value} & ${depth}`);
   
   //if the value is less than node and left isn't empty
-  if (value < current.value && current.left !== null) {
-    // recoursive into the left node
-    this.traverseCallback(value, callback. current.left, depth + 1);
+  if (value < current.value && current.left) {
+    // recoursive into the left nodeS
+    this.find(value, callback, current.left, depth + 1);
   // if the value is greater than ndoe and right isn't empty
   } else if (value > current.value && current.right !== null) {
     //recousive into the right now
-    this.traverseCallback(value, callback, current.right, depth + 1);
+    this.find(value, callback, current.right, depth + 1);
   //if is correct node
-  } else if (value === current.value) {
+  } else {
     // calls callback
-    callback(current.value, depth);
+    // callback(current.value, value, current, depth);
+    callback(current.value, current, depth);
   }
   
   //invokes the callback, to allow the information to go backup the recoursive
